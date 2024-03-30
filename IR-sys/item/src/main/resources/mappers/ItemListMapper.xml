@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zuitem.mapper.ItemListMapper">
+    <select id="selectAll" resultType="ItemList">
+        select * from itemlist
+        <where>
+            <if test="search!=''">
+                iname like "%"#{search}"%"
+            </if>
+            <if test="select!=''">
+                status = #{select}
+            </if>
+        </where>
+    </select>
+    <select id="findItem" resultType="ItemList">
+        select *
+        from itemlist
+        where itemid = #{itemid}
+    </select>
+    <insert id="addItem" parameterType="ItemList">
+        INSERT INTO itemlist (itemid, iname, photo, price, status, detail)
+        VALUES (#{itemid}, #{iname}, #{photo}, #{price}, #{status},#{detail})
+    </insert>
+    <update id="editItem" parameterType="ItemList">
+        UPDATE itemlist
+        SET iname = #{iname},
+            photo  = #{photo},
+            price  =  #{price},
+            status =  #{status},
+            detail = #{detail}
+        WHERE itemid = #{itemid}
+    </update>
+    <delete id="deleteItem" parameterType="ItemList">
+        delete from itemlist where itemid in
+        <foreach collection="list" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zuitem.mapper.ZulistMapper">
+
+    <resultMap id="userlistzuResultMap" type="Zulist">
+        <id column="zid" property="zid" jdbcType="INTEGER"/>
+        <result column="item_id" property="item_id"/>
+        <result column="iname" property="iname"/>
+        <result column="contract_id" property="contract_id"/>
+        <result column="price" property="price"/>
+        <result column="user_id" property="user_id"/>
+        <association property="userlist" javaType="Userlist">
+            <!-- column:userlist表的主键对应的列  property：userlist对象中id属性-->
+            <id column="id" property="id"/>
+            <result column="user_name" property="name"/>
+            <result column="idcard" property="idcard"/>
+            <result column="phone" property="phone"/>
+            <result column="user_id" property="user_id"/>
+            <result column="nickname" property="nickname"/>
+        </association>
+    </resultMap>
+    <insert id="addzulist" parameterType="Zulist">
+        insert into zulist(item_id, price, iname, user_id, contract_id)
+        values (#{item_id}, #{price}, #{iname}, #{user_id}, #{contract_id})
+    </insert>
+    <delete id="deleteByItem_id" parameterType="Zulist">
+        delete
+        from zulist
+        where item_id = #{item_id}
+    </delete>
+
+    <select id="findAll" resultMap="userlistzuResultMap">
+        select z.*,u.name, u.nickname, u.idcard, u.phone
+        from zulist as z
+        LEFT JOIN userlist as u on z.user_id = u.user_id
+        <where>
+            <if test="username != ''">
+                u.name = #{username}
+            </if>
+            <if test="search!=''">
+                and z.iname like "%"#{search}"%"
+            </if>
+        </where>
+    </select>
+    <select id="findByItem_idZulist" resultType="Zulist">
+        select *
+        from zulist
+        where item_id = #{item_id}
+    </select>
+
+</mapper>
